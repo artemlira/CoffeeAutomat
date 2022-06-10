@@ -14,6 +14,14 @@ class CoffeeAutomat {
 
    getRecipes() {
       fetch('/recept.json')
+         //    , {
+         //    method: 'POST',
+         //    mode: 'cors',
+         //    headers: {
+         //       'Content-Type': 'application/x-www-form-urlencoded'
+         //    },
+         //    credentials: "include"
+         // })
          .then((response) => {
             if (response.status !== 200) {
                throw new Error('Response status is not 200')
@@ -22,20 +30,32 @@ class CoffeeAutomat {
          })
          .then((data) => {
             data.forEach(item => {
-               console.dir(item);
-               this.namesDinks.push(item.title_ua);
+               if (item.title_en) {
+                  this.namesDinks.push(item.title_en);
+               }
             })
+            this.addDrinks(this.namesDinks);
          })
          .catch((error) => console.error(error));
    }
 
-   addDrinks() {
-      // console.log(typeof this.namesDinks);
-      let drink = this.drink.cloneNode(true);
-      this.namesDinks.forEach((item) => {
-         console.dir(item);
+   addDrinks(arr) {
+      arr.forEach((item) => {
+         let drink = this.drink.cloneNode();
          drink.innerText = item;
-         this.wrapper.querySelector('.names').insertAdjacentElemen('beforeend', drink);
+         this.wrapper.querySelector('.names').append(drink);
+      });
+   }
+
+   choiceDrink() {
+      this.wrapper.addEventListener('click', (even) => {
+         let target = even.target;
+         if (target.matches('.drink')) {
+            this.wrapper.querySelectorAll('.active').forEach(item => {
+               item.classList.remove('active');
+            });
+            target.classList.add('active');
+         }
       });
    }
 
@@ -46,7 +66,7 @@ class CoffeeAutomat {
       console.dir(this);
       this.removeDrinks();
       this.getRecipes();
-      this.addDrinks();
+      this.choiceDrink();
    }
 }
 
