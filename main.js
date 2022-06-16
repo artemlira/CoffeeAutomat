@@ -31,10 +31,11 @@ class CoffeeAutomat {
          .then((data) => {
             data.forEach(item => {
                if (item.title_en) {
-                  this.namesDinks.push(item.title_en);
+                  this.namesDinks.push(item.title_ua);
                }
             })
             this.addDrinks(this.namesDinks);
+            this.showRecipe(data);
          })
          .catch((error) => console.error(error));
    }
@@ -59,8 +60,48 @@ class CoffeeAutomat {
       });
    }
 
+   showRecipe(arr) {
+      this.wrapper.addEventListener('click', (even) => {
+         let target = even.target;
+         if (target.matches('.drink')) {
+            this.image.classList.forEach(v => {
+               if (v != 'image') {
+                  this.image.classList.remove(v);
+               }
+            })
+            arr.forEach(item => {
+               if (target.innerText == item.title_ua) {
+                  this.image.querySelectorAll('.coffee').forEach(i => i.remove());
+                  this.image.querySelectorAll('.milk').forEach(i => i.remove());
+                  this.image.querySelectorAll('.water').forEach(i => i.remove());
+                  this.image.querySelectorAll('.milkfoam').forEach(i => i.remove());
 
 
+                  item.recipe.forEach((v, i, c) => {
+                     let drink = this.drink.cloneNode();
+                     drink.classList.remove('drink');
+                     target.closest('.wrapper').querySelector('.image').prepend(drink);
+                     drink.classList.add(v.class_name);
+
+                     if (v.class_name == 'coffee') {
+                        this.wrapper.querySelector('.coffee').style.height = v.volume * 30 + 'px';
+                     }
+                     if (v.class_name == 'milk') {
+                        this.wrapper.querySelector('.milk').style.height = v.volume * 30 + 'px';
+                     }
+                     if (v.class_name == 'water') {
+                        this.wrapper.querySelector('.water').style.height = v.volume * 30 + 'px';
+                     }
+                     if (v.class_name == 'milkfoam') {
+                        this.wrapper.querySelector('.milkfoam').style.height = v.volume * 30 + 'px';
+                     }
+
+                  });
+               }
+            })
+         }
+      });
+   }
 
    init() {
       console.dir(this);
